@@ -3,7 +3,7 @@ const app = express();
 const socket = require('socket.io');
 const cors = require('cors');
 
-
+app.use(express.json());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -27,11 +27,13 @@ io = socket(server, {cors: {origin: '*'}});
 io.on('connection', (socket) => {
     console.log(socket.id + 'Usuário conectado');
 
-    socket.on('disconnect', () => {
-        console.log('Usuário desconectado');
+    socket.on('conectar_a_sala', (dados) => {
+        socket.join(dados);
+        console.log('Conectado a sala: ' + dados);
     })
 
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
+    socket.on('enviar_mensagem', (dados) => {
+        console.log(dados);
+        socket.to(dados.sala).emit('receber_mensagem', dados.conteudo);
     })
 })
