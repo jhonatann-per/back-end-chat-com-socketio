@@ -3,6 +3,9 @@ const app = express();
 const socket = require('socket.io');
 const cors = require('cors');
 
+const database = require('./config/database');
+const Usuario = require('./models/Usuario');
+
 app.use(express.json());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -13,10 +16,23 @@ app.use((req, res, next) => {
 })
 
 
-
 app.get('/', (req, res) => {
-    res.send('Mandou bem!');
+    res.send('Servidor rodando!');
 })
+
+app.post('/cadastrar-usuario', async (req, res) =>{
+     var dados = req.body;
+     await Usuario.create(dados).then(() => {
+         return res.json({
+             mensagem: 'Usuário cadastrado com sucesso!'
+         })
+     }).catch((erro) => {
+         return res.status(400).json({
+             mensagem: 'Erro ao cadastrar usuário!'
+         })
+     })
+})
+
 
 const server = app.listen(8080, () => {
     console.log('Servidor iniciado na porta: http://localhost:8080');
