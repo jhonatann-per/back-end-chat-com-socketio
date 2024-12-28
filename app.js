@@ -100,7 +100,7 @@ app.post('/cadastrar-sala', async (req,res) =>{
 });
 
 
-app.get('/listar-mensagens:sala', async (req, res) => {
+app.get('/listar-mensagens/:sala', async (req, res) => {
     const {sala} = req.params;
     const mensagens = await Mensagens.findAll({
         order: [['id', 'ASC']],
@@ -119,6 +119,23 @@ app.get('/listar-mensagens:sala', async (req, res) => {
         });
     });
 });
+
+app.get('/listar-salas', async (req, res) =>{
+    const salas = await Sala.findAll({
+        order: [['id', 'ASC']],
+    })
+    .then((salas) => {
+        return res.json({
+            erro: false,
+            salas: salas
+        });
+    }).catch((erro) => {
+        return res.status(400).json({
+            erro: true,
+            mensagem: 'Erro ao listar salas!'
+        });
+    });
+})
 
 const server = app.listen(8080, () => {
     console.log('Servidor iniciado na porta: http://localhost:8080');
